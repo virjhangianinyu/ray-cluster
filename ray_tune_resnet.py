@@ -1,9 +1,9 @@
 import ray
 from ray import tune
 from ray.tune.tuner import Tuner
-from ray.tune.search.grid_search import GridSearch
 from ray.tune.schedulers import ASHAScheduler
 from ray.air import session, RunConfig
+from ray.air.config import ScalingConfig
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -59,9 +59,9 @@ def train_cifar(config):
 
 # Define hyperparameter search space
 search_space = {
-    "lr": GridSearch([0.001, 0.01, 0.1]),
-    "batch_size": GridSearch([64, 128, 256]),
-    "dropout": GridSearch([0.2, 0.3, 0.5])
+    "lr": tune.grid_search([0.001, 0.01, 0.1]),
+    "batch_size": tune.grid_search([64, 128, 256]),
+    "dropout": tune.grid_search([0.2, 0.3, 0.5])
 }
 
 # Initialize Ray
@@ -83,11 +83,11 @@ tuner = Tuner(
     tune_config=tune.TuneConfig(
         scheduler=asha_scheduler,  # Add ASHA scheduler
         num_samples=1,  # No random sampling since we're using GridSearch
-        resources_per_trial={"cpu": 4}  # 1 CPU per trial
     ),
     run_config=RunConfig(
         storage_path="~/.ray_results",  # Replace with your preferred directory
-        name="cifar10_tuning"  # Organize results under this name
+        name="cifar10_tuning",  # Organize results under this name
+
     )
 )
 
