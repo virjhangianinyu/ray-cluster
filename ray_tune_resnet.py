@@ -1,11 +1,15 @@
 import ray
 from ray import tune
+from ray.tune.tuner import Tuner
+from ray.tune.search.grid_search import GridSearch
+from ray.tune.schedulers import ASHAScheduler
+from ray.air import session, RunConfig
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torchvision import datasets, transforms, models
 
-# Training function
+# Define the training function
 def train_cifar(config):
     # Dataset and preprocessing
     transform = transforms.Compose([
@@ -38,8 +42,7 @@ def train_cifar(config):
             loss.backward()
             optimizer.step()
 
-    # Validation function
-    def validate_model():
+        # Validation accuracy
         model.eval()
         correct = 0
         total = 0
@@ -49,29 +52,51 @@ def train_cifar(config):
                 _, predicted = torch.max(output.data, 1)
                 total += target.size(0)
                 correct += (predicted == target).sum().item()
-        return correct / total
+        accuracy = correct / total
 
-    # Report validation accuracy
-    accuracy = validate_model()
-    tune.report(accuracy=accuracy)
+        # Report accuracy after each epoch
+        session.report({"accuracy": accuracy, "epoch": epoch})
 
 # Define hyperparameter search space
 search_space = {
-    "lr": tune.grid_search([0.001, 0.01, 0.1]),
-    "batch_size": tune.choice([64, 128, 256]),
-    "dropout": tune.choice([0.2, 0.3, 0.5])
+    "lr": GridSearch([0.001, 0.01, 0.1]),
+    "batch_size": GridSearch([64, 128, 256]),
+    "dropout": GridSearch([0.2, 0.3, 0.5])
 }
 
-# Run Ray Tune
+# Initialize Ray
 ray.init(address="auto")
-analysis = tune.run(
-    train_cifar,
-    config=search_space,
-    resources_per_trial={"cpu": 1},
-    local_dir="./ray_results",
-    verbose=1
+
+# Define the ASHA Scheduler
+asha_scheduler = ASHAScheduler(
+    metric="accuracy",
+    mode="max",
+    max_t=10,  # Maximum epochs
+    grace_period=2,  # Minimum epochs before termination
+    reduction_factor=2  # Halve the number of trials at each step
 )
 
-# Print the best hyperparameters
-print("Best hyperparameters: ", analysis.best_config)
+# Use Tuner for hyperparameter tuning
+tuner = Tuner(
+    train_cifar,
+    param_space=search_space,
+    tune_config=tune.TuneConfig(
+        scheduler=asha_scheduler,  # Add ASHA scheduler
+        num_samples=1,  # No random sampling since we're using GridSearch
+        resources_per_trial={"cpu": 4}  # 1 CPU per trial
+    ),
+    run_config=RunConfig(
+        storage_path="~/.ray_results",  # Replace with your preferred directory
+        name="cifar10_tuning"  # Organize results under this name
+    )
+)
+
+# Run the tuning job
+results = tuner.fit()
+
+# Print the best results
+best_result = results.get_best_result(metric="accuracy", mode="max")
+print("Best hyperparameters: ", best_result.config)
+
+# Shutdown Ray
 ray.shutdown()
