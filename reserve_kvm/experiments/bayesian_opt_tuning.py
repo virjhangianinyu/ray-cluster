@@ -2,7 +2,7 @@ from ray import tune
 from ray.tune.tuner import Tuner
 from ray.tune.search.bayesopt import BayesOptSearch
 from ray.air import RunConfig
-from common import svm_train
+from svm_trainer import svm_train
 
 # Bayesian Optimization Configuration
 bayes_search_config = {

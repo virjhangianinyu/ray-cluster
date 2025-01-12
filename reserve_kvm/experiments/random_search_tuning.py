@@ -1,7 +1,7 @@
 from ray import tune
 from ray.tune.tuner import Tuner
 from ray.air import RunConfig
-from common import svm_train
+from svm_trainer import svm_train
 
 # Random Search Configuration
 random_search_config = {
