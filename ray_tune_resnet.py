@@ -82,10 +82,10 @@ tuner = Tuner(
     param_space=search_space,
     tune_config=tune.TuneConfig(
         scheduler=asha_scheduler,  # Add ASHA scheduler
-        num_samples=1,  # No random sampling since we're using GridSearch
+        num_samples=1,  # No random sampling since we're using grid_search
     ),
     run_config=RunConfig(
-        storage_path="~/.ray_results",  # Replace with your preferred directory
+        storage_path="~/.ray_results",  
         name="cifar10_tuning",  # Organize results under this name
 
     )
