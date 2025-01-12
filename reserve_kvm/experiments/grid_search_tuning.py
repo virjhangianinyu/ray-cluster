@@ -18,7 +18,7 @@ tuner = Tuner(
     tune_config=tune.TuneConfig(num_samples=1),
     run_config=RunConfig(
         name="grid_search_svm",
-        storage_path="./ray_results"
+        storage_path="file:///home/cc/ray-cluster/reserve_kvm/experiments/.ray_results"
     )
 )
 
