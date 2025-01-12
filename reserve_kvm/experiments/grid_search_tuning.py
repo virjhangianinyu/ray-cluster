@@ -2,6 +2,7 @@ from ray import tune
 from ray.tune.tuner import Tuner
 from ray.air import RunConfig
 from svm_trainer import svm_train
+import ray
 
 # Grid Search Configuration
 grid_search_config = {
