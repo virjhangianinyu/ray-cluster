@@ -9,14 +9,16 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import hinge_loss, accuracy_score
 import torch
 from torchvision import datasets, transforms
+import os
 
 # Initialize Ray (connect to Ray cluster)
 ray.init(address="auto")
-
+ 
+data_dir = os.path.join(os.path.dirname(__file__), "data")
 # Load MNIST dataset using PyTorch
 def load_mnist():
     transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
-    mnist_train = datasets.MNIST(root="data", train=True, download=False, transform=transform)
+    mnist_train = datasets.MNIST(root=data_dir, train=True, download=False, transform=transform)
     X_train = mnist_train.data.numpy().reshape(-1, 28 * 28) / 255.0  # Normalize
     y_train = mnist_train.targets.numpy()
     return X_train, y_train
