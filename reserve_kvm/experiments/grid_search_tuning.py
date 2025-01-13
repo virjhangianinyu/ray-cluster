@@ -58,7 +58,7 @@ tuner = Tuner(
     ),
     run_config=RunConfig(
         name="grid_search_mnist_svm",
-        storage_path="/absolute/path/to/your/results/grid_search"  # Update to your desired path
+        storage_path="file:///home/cc/.ray_results"  
     )
 )
 
