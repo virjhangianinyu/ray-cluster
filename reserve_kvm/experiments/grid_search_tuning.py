@@ -16,7 +16,7 @@ ray.init(address="auto")
 # Load MNIST dataset using PyTorch
 def load_mnist():
     transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
-    mnist_train = datasets.MNIST(root="./data", train=True, download=False, transform=transform)
+    mnist_train = datasets.MNIST(root="data", train=True, download=False, transform=transform)
     X_train = mnist_train.data.numpy().reshape(-1, 28 * 28) / 255.0  # Normalize
     y_train = mnist_train.targets.numpy()
     return X_train, y_train
