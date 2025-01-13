@@ -14,7 +14,7 @@ from torchvision import datasets, transforms
 # Initialize Ray (connect to Ray cluster)
 ray.init(address="auto")
  
-data_dir = "/.data"
+data_dir = "~/.data"
 # Load MNIST dataset using PyTorch
 def load_mnist():
     transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
