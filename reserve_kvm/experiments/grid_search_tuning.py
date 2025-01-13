@@ -18,7 +18,11 @@ data_dir = "~/data"
 # Load MNIST dataset using PyTorch
 def load_mnist():
     transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
-    mnist_train = datasets.MNIST(root=data_dir, train=True, download=False, transform=transform)
+    try:
+        mnist_train = datasets.MNIST(root=data_dir, train=True, download=False, transform=transform)
+
+    except:
+        mnist_train = datasets.MNIST(root=data_dir, train=True, download=True, transform=transform)
     X_train = mnist_train.data.numpy().reshape(-1, 28 * 28) / 255.0  # Normalize
     y_train = mnist_train.targets.numpy()
     return X_train, y_train
