@@ -61,7 +61,7 @@ def random_search_tuning():
         svm_train,
         param_space=random_search_config,
         tune_config=tune.TuneConfig(num_samples=50, metric="accuracy", mode="max"),
-        run_config=RunConfig(name="random_search_digits", storage_path="storage_dir")
+        run_config=RunConfig(name="random_search_digits", storage_path=storage_dir)
     )
     results = tuner.fit()
     best_result = results.get_best_result(metric="accuracy", mode="max")
@@ -79,7 +79,7 @@ def bayesian_optimization_tuning():
         svm_train,
         param_space=bayes_search_config,
         tune_config=tune.TuneConfig(search_alg=bayesopt_search, num_samples=50),
-        run_config=RunConfig(name="bayesopt_digits", storage_path="storage_dir")
+        run_config=RunConfig(name="bayesopt_digits", storage_path=storage_dir)
     )
     results = tuner.fit()
     best_result = results.get_best_result(metric="accuracy", mode="max")
@@ -97,7 +97,7 @@ def successive_halving_tuning():
         svm_train,
         param_space=asha_search_config,
         tune_config=tune.TuneConfig(scheduler=asha_scheduler, num_samples=50),
-        run_config=RunConfig(name="asha_digits", storage_path="storage_dir")
+        run_config=RunConfig(name="asha_digits", storage_path=storage_dir)
     )
     results = tuner.fit()
     best_result = results.get_best_result(metric="accuracy", mode="max")
