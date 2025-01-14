@@ -25,7 +25,7 @@ def load_digits_data():
 # SVM Training Function
 def svm_train(config):
     X_train, X_val, y_train, y_val = load_digits_data()
-    model = SVC(kernel=config["kernel"], C=config["C"], gamma=config.get("gamma", "scale"))
+    model = SVC(kernel=config.get("kernel","rbf"), C=config["C"], gamma=config.get("gamma", "scale"))
     model.fit(X_train, y_train)
     y_pred = model.predict(X_val)
     accuracy = accuracy_score(y_val, y_pred)
@@ -70,7 +70,6 @@ def random_search_tuning():
 # Bayesian Optimization Tuning
 def bayesian_optimization_tuning():
     bayes_search_config = {
-        "kernel": tune.choice(["linear", "rbf"]),
         "C": tune.loguniform(0.1, 10),
         "gamma": tune.loguniform(0.01, 1)  # Only for rbf kernel
     }
