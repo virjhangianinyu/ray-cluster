@@ -11,6 +11,9 @@ grid_search_config = {
     "degree": tune.grid_search([2, 3, 4])  # Only for poly kernel
 }
 
+
+ray.init(address="auto")
+
 # Run Grid Search
 tuner = Tuner(
     svm_train,
@@ -18,7 +21,7 @@ tuner = Tuner(
     tune_config=tune.TuneConfig(num_samples=1),
     run_config=RunConfig(
         name="grid_search_svm",
-        storage_path="./ray_results"
+        storage_path="file:///home/cc/.ray_results"
     )
 )
 
